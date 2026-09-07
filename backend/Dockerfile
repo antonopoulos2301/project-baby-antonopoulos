@@ -8,18 +8,19 @@ RUN bun install --frozen-lockfile
 
 COPY prisma ./prisma
 COPY prisma.config.ts ./
-COPY .env.example ./.env.example
 
 COPY src ./src
-
-# Caso seu Prisma Client seja gerado para ../generated/prisma
 COPY tsconfig.json ./
 
 RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" \
     bunx prisma generate
 
+COPY docker-entrypoint.sh ./
+
+RUN chmod +x /app/docker-entrypoint.sh
+
 ENV NODE_ENV=production
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["/bin/sh", "/app/docker-entrypoint.sh"]
