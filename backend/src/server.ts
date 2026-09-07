@@ -1,0 +1,10 @@
+import { app } from "./app";
+
+const PORT = Number(process.env.PORT ?? 3000);
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("");
+  console.log("🚀 Baby Antonopoulos API");
+  console.log(`📡 Porta ${PORT}`);
+  console.log("");
+});

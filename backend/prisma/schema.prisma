@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MemoriaType {
+
+  GRAVIDEZ
+  NASCIMENTO
+  MARCO
+  ANIVERSÁRIO
+  FOTO
+  CARTA
+  OUTRO
+
+
+}
+
+model Memoria {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  happenedAt  DateTime
+  imageUrl    String?
+  type        MemoriaType @default(OUTRO)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuestbookMessage {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(80)
+  email     String   @db.VarChar(254)
+  message   String   @db.VarChar(1000)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
