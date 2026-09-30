@@ -17,7 +17,7 @@ export const guestbookService = {
   },
 
   async create(data: CreateGuestbookMessageInput): Promise<GuestbookMessage> {
-    const response = await fetch("/api/guestbook", {
+    const response = await fetch(`${API_URL}/api/guestbook`, {
       method: "POST",
 
       headers: {
