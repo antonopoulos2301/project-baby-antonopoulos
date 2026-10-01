@@ -4,6 +4,7 @@ import { Timeline } from "./components/Timeline";
 import { EmptyState } from "./components/EmptyState";
 import { LoadingState } from "./components/LoadingState";
 import { memoryService } from "./services/MemoryService";
+import { Poll } from "./components/Poll";
 import { Footer } from "./components/Footer";
 import type { Memory } from "./types/Memory";
 import { Guestbook } from "./components/guestbook/Guestbook";
@@ -39,6 +40,8 @@ function App() {
       <Hero />
 
       <main className="mx-auto max-w-5xl px-5 pb-24 sm:px-8 lg:px-10">
+        <Poll />
+
         <section className="pt-16 sm:pt-24">
           <div className="mb-14 text-center">
             <span className="font-display text-2xl text-sage-500">

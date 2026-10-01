@@ -3,6 +3,7 @@ import cors from "cors";
 
 import { memoryRouter } from "./routes/MemoryRouter";
 import { guestbookRouter } from "./routes/GuestbookRouter";
+import { pollRouter } from "./routes/PollRouter";
 
 export const app = express();
 
@@ -33,3 +34,4 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/memories", memoryRouter);
 app.use("/api/guestbook", guestbookRouter);
+app.use("/api/poll", pollRouter);

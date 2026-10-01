@@ -47,3 +47,16 @@ model GuestbookMessage {
   @@index([createdAt])
 }
 
+enum VoteTeam {
+  FILIPE
+  MELINA
+}
+
+model Vote {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(80)
+  team      VoteTeam
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
