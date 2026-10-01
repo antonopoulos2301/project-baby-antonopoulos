@@ -1,3 +1,5 @@
+import { Countdown } from "./Countdown";
+
 export function Hero() {
     return (
         <header className="relative overflow-hidden border-b border-beige/60">
@@ -44,6 +46,8 @@ export function Hero() {
                             para sempre, porque cada capítulo da sua
                             história é precioso para nós.
                         </p>
+
+                        <Countdown />
 
                         <div className="mt-8 flex justify-center">
                             <a
