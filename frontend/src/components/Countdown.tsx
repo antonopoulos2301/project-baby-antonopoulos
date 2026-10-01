@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // 🎯 Data-alvo: chegada do bebê.
 // Para mudar, altere só esta linha. Formato: new Date(ano, mês-1, dia).
 // (mês começa em 0, então abril = 3). Ex.: 06/04/2026 -> new Date(2026, 3, 6).
-const TARGET_DATE = new Date(2026, 3, 6, 0, 0, 0);
+const TARGET_DATE = new Date(2027, 3, 6, 0, 0, 0);
 
 interface TimeLeft {
   days: number;
