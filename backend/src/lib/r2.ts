@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import sharp from "sharp";
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -58,13 +59,44 @@ export async function uploadToR2(
 ): Promise<{ key: string; url: string }> {
   const { buffer, contentType, originalName, prefix = "memorias" } = params;
 
-  const extFromName = originalName.includes(".")
-    ? originalName.split(".").pop() ?? ""
-    : "";
-  const ext = (extFromName.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg");
+  const originalExt =
+    (originalName.includes(".")
+      ? originalName.split(".").pop() ?? ""
+      : ""
+    )
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "") || "jpg";
 
   const baseName =
     slugify(originalName.replace(/\.[^.]+$/, "")) || "foto";
+
+  // Otimiza imagens: converte para WebP (ótima qualidade, bem mais leve),
+  // reorienta pelo EXIF e limita o maior lado a 2000px.
+  let body: Buffer = buffer;
+  let ext = originalExt;
+  let finalContentType = contentType || "application/octet-stream";
+
+  if ((contentType || "").startsWith("image/")) {
+    try {
+      body = await sharp(buffer, { animated: true })
+        .rotate()
+        .resize({
+          width: 2000,
+          height: 2000,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 82 })
+        .toBuffer();
+      ext = "webp";
+      finalContentType = "image/webp";
+    } catch (err) {
+      console.error("Falha ao otimizar imagem, enviando original:", err);
+      body = buffer;
+      ext = originalExt;
+      finalContentType = contentType || "application/octet-stream";
+    }
+  }
 
   const key = `${prefix}/${Date.now()}-${baseName}.${ext}`;
 
@@ -72,8 +104,9 @@ export async function uploadToR2(
     new PutObjectCommand({
       Bucket: bucket as string,
       Key: key,
-      Body: buffer,
-      ContentType: contentType || "application/octet-stream",
+      Body: body,
+      ContentType: finalContentType,
+      CacheControl: "public, max-age=31536000, immutable",
     }),
   );
 
