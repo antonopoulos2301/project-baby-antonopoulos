@@ -40,14 +40,21 @@ model Memoria {
   comments  MemoryComment[]
 }
 
-model GuestbookMessage {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(80)
-  email     String   @db.VarChar(254)
-  message   String   @db.VarChar(1000)
-  createdAt DateTime @default(now())
+enum GuestbookStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
 
-  @@index([createdAt])
+model GuestbookMessage {
+  id        Int             @id @default(autoincrement())
+  name      String          @db.VarChar(80)
+  email     String          @db.VarChar(254)
+  message   String          @db.VarChar(1000)
+  status    GuestbookStatus @default(PENDING)
+  createdAt DateTime        @default(now())
+
+  @@index([status, createdAt])
 }
 
 enum VoteTeam {

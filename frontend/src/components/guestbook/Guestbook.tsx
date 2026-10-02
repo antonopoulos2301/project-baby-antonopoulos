@@ -43,15 +43,6 @@ export function Guestbook() {
         loadMessages();
     }, []);
 
-    function handleMessageCreated(
-        message: GuestbookMessage
-    ) {
-        setMessages((currentMessages) => [
-            message,
-            ...currentMessages,
-        ]);
-    }
-
     return (
         <section className="border-t border-beige/50 bg-cream/30">
             <div className="mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
@@ -82,9 +73,7 @@ export function Guestbook() {
                     id="guestbook-form"
                     className="mx-auto mt-12 max-w-2xl scroll-mt-10"
                 >
-                    <GuestbookForm
-                        onCreated={handleMessageCreated}
-                    />
+                    <GuestbookForm />
                 </div>
 
                 <div className="mt-20">

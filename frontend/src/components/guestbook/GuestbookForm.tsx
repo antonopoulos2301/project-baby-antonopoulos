@@ -1,39 +1,17 @@
-import {
-    useState,
-    type FormEvent,
-} from "react";
+import { useState, type FormEvent } from "react";
 
 import { guestbookService } from "../../services/GuestbookService";
 
-import type {
-    GuestbookMessage,
-} from "../../types/Guestbook";
-
-interface GuestbookFormProps {
-    onCreated: (
-        message: GuestbookMessage
-    ) => void;
-}
-
-export function GuestbookForm({
-    onCreated,
-}: GuestbookFormProps) {
+export function GuestbookForm() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
 
-    const [sending, setSending] =
-        useState(false);
+    const [sending, setSending] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
 
-    const [error, setError] =
-        useState<string | null>(null);
-
-    const [success, setSuccess] =
-        useState(false);
-
-    async function handleSubmit(
-        event: FormEvent<HTMLFormElement>
-    ) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         setSending(true);
@@ -41,14 +19,7 @@ export function GuestbookForm({
         setSuccess(false);
 
         try {
-            const created =
-                await guestbookService.create({
-                    name,
-                    email,
-                    message,
-                });
-
-            onCreated(created);
+            await guestbookService.create({ name, email, message });
 
             setName("");
             setEmail("");
@@ -85,9 +56,7 @@ export function GuestbookForm({
                     id="guest-name"
                     type="text"
                     value={name}
-                    onChange={(event) =>
-                        setName(event.target.value)
-                    }
+                    onChange={(event) => setName(event.target.value)}
                     required
                     minLength={2}
                     maxLength={80}
@@ -108,9 +77,7 @@ export function GuestbookForm({
                     id="guest-email"
                     type="email"
                     value={email}
-                    onChange={(event) =>
-                        setEmail(event.target.value)
-                    }
+                    onChange={(event) => setEmail(event.target.value)}
                     required
                     maxLength={254}
                     placeholder="voce@exemplo.com"
@@ -118,8 +85,8 @@ export function GuestbookForm({
                 />
 
                 <p className="mt-2 text-xs leading-5 text-brown-300">
-                    Seu e-mail será armazenado de forma
-                    privada e não aparecerá no mural.
+                    Seu e-mail será armazenado de forma privada e não aparecerá
+                    no mural.
                 </p>
             </div>
 
@@ -140,9 +107,7 @@ export function GuestbookForm({
                 <textarea
                     id="guest-message"
                     value={message}
-                    onChange={(event) =>
-                        setMessage(event.target.value)
-                    }
+                    onChange={(event) => setMessage(event.target.value)}
                     required
                     minLength={5}
                     maxLength={1000}
@@ -160,7 +125,8 @@ export function GuestbookForm({
 
             {success && (
                 <div className="mt-5 rounded-2xl border border-sage-300 bg-sage-100 px-4 py-3 text-sm text-sage-700">
-                    Sua mensagem foi guardada com carinho. ♡
+                    Recebemos sua mensagem com carinho! Ela aparecerá no mural
+                    após ser aprovada. ♡
                 </div>
             )}
 
@@ -169,9 +135,7 @@ export function GuestbookForm({
                 disabled={sending}
                 className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-sage-500 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-sage-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
-                {sending
-                    ? "Guardando mensagem..."
-                    : "Deixar uma mensagem ♡"}
+                {sending ? "Enviando mensagem..." : "Deixar uma mensagem ♡"}
             </button>
         </form>
     );
