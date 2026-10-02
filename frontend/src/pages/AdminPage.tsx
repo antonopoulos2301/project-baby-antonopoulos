@@ -108,8 +108,9 @@ export function AdminPage() {
         setStatus({
           kind: "error",
           message:
-            body?.error ??
-            `Não foi possível salvar a memória (erro ${response.status}).`,
+            (body?.error ??
+              `Não foi possível salvar a memória (erro ${response.status}).`) +
+            (body?.detail ? ` [${body.detail}]` : ""),
         });
         return;
       }

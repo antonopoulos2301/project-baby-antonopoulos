@@ -64,10 +64,15 @@ export const memoryController = {
             originalName: req.file.originalname,
           });
           imageUrl = uploaded.url;
-        } catch (uploadErr) {
+        } catch (uploadErr: any) {
           console.error(uploadErr);
           return res.status(502).json({
             error: "Falha ao enviar a imagem para o bucket.",
+            detail:
+              uploadErr?.name ||
+              uploadErr?.Code ||
+              uploadErr?.message ||
+              String(uploadErr),
           });
         }
       }

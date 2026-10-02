@@ -21,6 +21,10 @@ function getClient(): S3Client {
         accessKeyId: accessKeyId as string,
         secretAccessKey: secretAccessKey as string,
       },
+      // O Cloudflare R2 não suporta os checksums que as versões novas do
+      // AWS SDK enviam por padrão — desativar evita falha no upload.
+      requestChecksumCalculation: "WHEN_REQUIRED",
+      responseChecksumValidation: "WHEN_REQUIRED",
     });
   }
 
