@@ -14,6 +14,15 @@ export const memoryService = {
       orderBy: {
         happenedAt: "desc",
       },
+      include: {
+        reactions: {
+          select: { emoji: true, count: true },
+        },
+        comments: {
+          orderBy: { createdAt: "asc" },
+          select: { id: true, name: true, text: true, createdAt: true },
+        },
+      },
     });
   },
 

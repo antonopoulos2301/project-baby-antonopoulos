@@ -35,6 +35,9 @@ model Memoria {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  reactions MemoryReaction[]
+  comments  MemoryComment[]
 }
 
 model GuestbookMessage {
@@ -59,4 +62,27 @@ model Vote {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+model MemoryReaction {
+  id        Int     @id @default(autoincrement())
+  memoriaId Int
+  emoji     String  @db.VarChar(16)
+  count     Int     @default(0)
+
+  memoria Memoria @relation(fields: [memoriaId], references: [id], onDelete: Cascade)
+
+  @@unique([memoriaId, emoji])
+}
+
+model MemoryComment {
+  id        Int      @id @default(autoincrement())
+  memoriaId Int
+  name      String   @db.VarChar(80)
+  text      String   @db.VarChar(500)
+  createdAt DateTime @default(now())
+
+  memoria Memoria @relation(fields: [memoriaId], references: [id], onDelete: Cascade)
+
+  @@index([memoriaId, createdAt])
 }
