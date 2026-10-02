@@ -61,6 +61,15 @@ export function Hero() {
                             </a>
                         </div>
 
+                        <div className="mt-4 flex justify-center">
+                            <a
+                                href="/album"
+                                className="text-sm font-medium text-sage-700 underline-offset-4 transition hover:underline"
+                            >
+                                📸 Ver o álbum de fotos
+                            </a>
+                        </div>
+
                         <div className="mt-8 flex items-center justify-center gap-2">
                             <span className="h-1.5 w-1.5 rounded-full bg-peach-300" />
 

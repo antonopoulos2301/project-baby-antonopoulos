@@ -5,7 +5,10 @@ const API = import.meta.env.VITE_API_URL ?? "";
 const EMOJIS = ["❤️", "😍", "🥰", "👏", "😂"];
 
 interface Props {
-  memoryId: number;
+  /** Base da API do item, ex.: "/api/memories/12" ou "/api/photos/3" */
+  basePath: string;
+  /** Chave única para guardar a reação deste item no navegador */
+  reactionKey: string;
   reactions?: MemoryReaction[];
   comments?: MemoryComment[];
 }
@@ -32,13 +35,13 @@ function formatDate(iso: string) {
   }
 }
 
-export function MemoryEngagement({ memoryId, reactions, comments }: Props) {
+export function Engagement({ basePath, reactionKey, reactions, comments }: Props) {
   const [counts, setCounts] = useState<Record<string, number>>(() =>
     buildCounts(reactions),
   );
   const [mine, setMine] = useState<string | null>(() => {
     try {
-      return localStorage.getItem(`memreact_${memoryId}`);
+      return localStorage.getItem(reactionKey);
     } catch {
       return null;
     }
@@ -70,8 +73,8 @@ export function MemoryEngagement({ memoryId, reactions, comments }: Props) {
 
   function storeMine(emoji: string | null) {
     try {
-      if (emoji) localStorage.setItem(`memreact_${memoryId}`, emoji);
-      else localStorage.removeItem(`memreact_${memoryId}`);
+      if (emoji) localStorage.setItem(reactionKey, emoji);
+      else localStorage.removeItem(reactionKey);
     } catch {
       // ignore
     }
@@ -80,7 +83,7 @@ export function MemoryEngagement({ memoryId, reactions, comments }: Props) {
   async function react(emoji: string) {
     if (busy) return;
     setBusy(true);
-    const url = `${API}/api/memories/${memoryId}/reactions`;
+    const url = `${API}${basePath}/reactions`;
     const headers = { "Content-Type": "application/json" };
     try {
       if (mine === emoji) {
@@ -133,7 +136,7 @@ export function MemoryEngagement({ memoryId, reactions, comments }: Props) {
 
     setSending(true);
     try {
-      const res = await fetch(`${API}/api/memories/${memoryId}/comments`, {
+      const res = await fetch(`${API}${basePath}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim(), text: text.trim() }),
@@ -239,7 +242,7 @@ export function MemoryEngagement({ memoryId, reactions, comments }: Props) {
         </BottomSheet>
       )}
 
-      {/* Bottom sheet: lista de comentários */}
+      {/* Bottom sheet: lista */}
       {sheet === "list" && (
         <BottomSheet
           title={`Comentários (${commentCount})`}
@@ -285,7 +288,7 @@ interface BottomSheetProps {
 function BottomSheet({ title, onClose, children }: BottomSheetProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-brown-900/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-brown-900/40 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"

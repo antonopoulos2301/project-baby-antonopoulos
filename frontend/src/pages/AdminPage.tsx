@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AlbumUploadForm } from "../components/AlbumUploadForm";
 
 const MEMORY_TYPES: { value: string; label: string }[] = [
   { value: "GRAVIDEZ", label: "Gravidez" },
@@ -272,6 +273,8 @@ export function AdminPage() {
             </div>
           )}
         </form>
+
+        <AlbumUploadForm secret={secret} />
 
         <p className="mt-6 text-center text-xs text-brown-300">
           <a href="/" className="underline hover:text-brown-500">

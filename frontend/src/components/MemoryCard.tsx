@@ -1,5 +1,5 @@
 import type { Memory } from "../types/Memory";
-import { MemoryEngagement } from "./MemoryEngagement";
+import { Engagement } from "./Engagement";
 
 interface MemoryCardProps {
     memory: Memory;
@@ -149,8 +149,9 @@ export function MemoryCard({
                             <span className="h-px w-8 bg-beige" />
                         </div>
 
-                        <MemoryEngagement
-                            memoryId={memory.id}
+                        <Engagement
+                            basePath={`/api/memories/${memory.id}`}
+                            reactionKey={`memreact_${memory.id}`}
                             reactions={memory.reactions}
                             comments={memory.comments}
                         />

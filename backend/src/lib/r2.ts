@@ -50,12 +50,13 @@ interface UploadParams {
   buffer: Buffer;
   contentType: string;
   originalName: string;
+  prefix?: string;
 }
 
 export async function uploadToR2(
   params: UploadParams,
 ): Promise<{ key: string; url: string }> {
-  const { buffer, contentType, originalName } = params;
+  const { buffer, contentType, originalName, prefix = "memorias" } = params;
 
   const extFromName = originalName.includes(".")
     ? originalName.split(".").pop() ?? ""
@@ -63,9 +64,9 @@ export async function uploadToR2(
   const ext = (extFromName.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg");
 
   const baseName =
-    slugify(originalName.replace(/\.[^.]+$/, "")) || "memoria";
+    slugify(originalName.replace(/\.[^.]+$/, "")) || "foto";
 
-  const key = `memorias/${Date.now()}-${baseName}.${ext}`;
+  const key = `${prefix}/${Date.now()}-${baseName}.${ext}`;
 
   await getClient().send(
     new PutObjectCommand({

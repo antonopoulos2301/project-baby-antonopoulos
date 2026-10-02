@@ -86,3 +86,38 @@ model MemoryComment {
 
   @@index([memoriaId, createdAt])
 }
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  title     String?  @db.VarChar(120)
+  imageUrl  String
+  createdAt DateTime @default(now())
+
+  reactions PhotoReaction[]
+  comments  PhotoComment[]
+
+  @@index([createdAt])
+}
+
+model PhotoReaction {
+  id      Int    @id @default(autoincrement())
+  photoId Int
+  emoji   String @db.VarChar(16)
+  count   Int    @default(0)
+
+  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  @@unique([photoId, emoji])
+}
+
+model PhotoComment {
+  id        Int      @id @default(autoincrement())
+  photoId   Int
+  name      String   @db.VarChar(80)
+  text      String   @db.VarChar(500)
+  createdAt DateTime @default(now())
+
+  photo Photo @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  @@index([photoId, createdAt])
+}
