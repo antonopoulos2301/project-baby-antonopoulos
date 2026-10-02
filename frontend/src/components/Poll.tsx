@@ -9,6 +9,8 @@ interface PollResults {
   votes: { name: string; team: Team }[];
 }
 
+const MAX_CHIPS = 12;
+
 export function Poll() {
   const [results, setResults] = useState<PollResults | null>(null);
   const [name, setName] = useState("");
@@ -16,6 +18,7 @@ export function Poll() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [modalTeam, setModalTeam] = useState<Team | null>(null);
 
   async function loadResults() {
     try {
@@ -31,6 +34,15 @@ export function Poll() {
     const id = setInterval(loadResults, 20000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!modalTeam) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalTeam(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modalTeam]);
 
   async function handleVote() {
     setError(null);
@@ -110,6 +122,7 @@ export function Poll() {
           disabled={sending}
           onSelect={() => setSelected("FILIPE")}
           names={namesOf("FILIPE")}
+          onShowAll={() => setModalTeam("FILIPE")}
         />
         <TeamCard
           title="Team Melina"
@@ -121,6 +134,7 @@ export function Poll() {
           disabled={sending}
           onSelect={() => setSelected("MELINA")}
           names={namesOf("MELINA")}
+          onShowAll={() => setModalTeam("MELINA")}
         />
       </div>
 
@@ -187,6 +201,58 @@ export function Poll() {
           )}
         </div>
       </div>
+
+      {/* Modal com todos os votantes de um time */}
+      {modalTeam && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-brown-900/40 p-4 backdrop-blur-sm"
+          onClick={() => setModalTeam(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-beige bg-paper shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-beige px-5 py-4">
+              <h3 className="font-display text-xl text-brown-900">
+                {modalTeam === "FILIPE" ? "Team Filipe 💙" : "Team Melina 💗"}
+                <span className="ml-2 text-sm font-normal text-brown-500">
+                  ({namesOf(modalTeam).length}{" "}
+                  {namesOf(modalTeam).length === 1 ? "voto" : "votos"})
+                </span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setModalTeam(null)}
+                aria-label="Fechar"
+                className="rounded-full px-2 text-2xl leading-none text-brown-500 transition hover:text-brown-900"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="overflow-y-auto px-5 py-4">
+              {namesOf(modalTeam).length === 0 ? (
+                <p className="text-center text-sm text-brown-500">
+                  Ninguém votou nesse time ainda.
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {namesOf(modalTeam).map((n, i) => (
+                    <span
+                      key={`${n}-${i}`}
+                      className="rounded-full border border-beige bg-white/80 px-3 py-1 text-sm text-brown-600"
+                    >
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -201,6 +267,7 @@ interface TeamCardProps {
   disabled: boolean;
   onSelect: () => void;
   names: string[];
+  onShowAll: () => void;
 }
 
 function TeamCard({
@@ -213,6 +280,7 @@ function TeamCard({
   disabled,
   onSelect,
   names,
+  onShowAll,
 }: TeamCardProps) {
   const isSky = accent === "sky";
 
@@ -224,6 +292,8 @@ function TeamCard({
 
   const bg = isSky ? "bg-sky-50/70" : "bg-pink-50/70";
   const bigText = isSky ? "text-sky-600" : "text-pink-500";
+
+  const hidden = names.length - MAX_CHIPS;
 
   return (
     <button
@@ -242,7 +312,7 @@ function TeamCard({
 
       {names.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {names.slice(0, 12).map((n, i) => (
+          {names.slice(0, MAX_CHIPS).map((n, i) => (
             <span
               key={`${n}-${i}`}
               className="rounded-full bg-white/70 px-2.5 py-1 text-xs text-brown-500"
@@ -250,9 +320,23 @@ function TeamCard({
               {n}
             </span>
           ))}
-          {names.length > 12 && (
-            <span className="px-1 py-1 text-xs text-brown-300">
-              +{names.length - 12}
+          {hidden > 0 && (
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={(e) => {
+                e.stopPropagation();
+                onShowAll();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.stopPropagation();
+                  onShowAll();
+                }
+              }}
+              className="cursor-pointer rounded-full bg-white/70 px-2.5 py-1 text-xs font-semibold text-brown-700 underline decoration-dotted transition hover:bg-white"
+            >
+              +{hidden} ver todos
             </span>
           )}
         </div>
