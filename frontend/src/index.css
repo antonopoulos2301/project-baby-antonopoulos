@@ -1,24 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #fbf6ee;
-  --color-cream: #f2e8d9;
+  /* Paleta "rosa antigo / rosa queimado" (os nomes sage/peach/brown
+     foram mantidos; só os valores mudaram, recolorindo todo o site) */
+  --color-paper: #fbf5f3;
+  --color-cream: #f2e4df;
 
-  --color-sage-100: #e8eadf;
-  --color-sage-300: #bcc1a6;
-  --color-sage-500: #8f9478;
-  --color-sage-700: #686d57;
+  /* Acento principal — rosa queimado (old rose) */
+  --color-sage-100: #f4e2e4;
+  --color-sage-300: #d8aab1;
+  --color-sage-500: #a85f6c;
+  --color-sage-700: #834956;
 
-  --color-peach-100: #f6e8dd;
-  --color-peach-300: #e0b89b;
-  --color-peach-500: #c99676;
+  /* Acento secundário — rosé/argila suave */
+  --color-peach-100: #f7e7e2;
+  --color-peach-300: #e2b6ae;
+  --color-peach-500: #bf8279;
 
-  --color-beige: #d8c5a8;
+  --color-beige: #ddc8c3;
 
-  --color-brown-300: #a58c72;
-  --color-brown-500: #725e49;
-  --color-brown-700: #57473a;
-  --color-brown-900: #463b32;
+  /* Texto — taupe amalvado quente */
+  --color-brown-300: #a8928d;
+  --color-brown-500: #7c6560;
+  --color-brown-700: #5c4a47;
+  --color-brown-900: #463836;
 
   --font-display: Georgia, "Times New Roman", serif;
   --font-body: Inter, system-ui, sans-serif;

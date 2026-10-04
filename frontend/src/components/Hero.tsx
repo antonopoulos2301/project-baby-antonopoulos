@@ -35,9 +35,9 @@ export function Hero() {
                         </div>
 
                         <h1 className="font-display text-4xl leading-[1.05] text-brown-900 sm:text-6xl lg:text-7xl">
-                            Uma história feita
+                            Uma história feita para você,
                             <span className="block italic text-sage-500">
-                                para você
+                                Melina
                             </span>
                         </h1>
 
