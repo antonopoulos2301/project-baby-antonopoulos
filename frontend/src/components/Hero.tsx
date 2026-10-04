@@ -35,9 +35,12 @@ export function Hero() {
                         </div>
 
                         <h1 className="font-display text-4xl leading-[1.05] text-brown-900 sm:text-6xl lg:text-7xl">
-                            Uma história feita para você,
-                            <span className="block italic text-sage-500">
-                                Melina
+                            Uma história feita para{" "}
+                            <span className="whitespace-nowrap">
+                                você,{" "}
+                                <span className="italic text-sage-500">
+                                    Melina
+                                </span>
                             </span>
                         </h1>
 
