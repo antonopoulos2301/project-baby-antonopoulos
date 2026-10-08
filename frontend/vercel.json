@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://projectbabyantonopoulos-qpeasgiq.b4a.run/api/:path*"
+      "destination": "https://projectbabyantonopoulos-6hglosa0.b4a.run/api/:path*"
     },
     {
       "source": "/(.*)",
