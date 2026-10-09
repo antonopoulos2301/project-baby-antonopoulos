@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { compressImage } from "../lib/compressImage";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
@@ -70,7 +71,14 @@ export function MemoryUploadForm({ secret }: { secret: string }) {
     formData.append("description", description.trim());
     formData.append("happenedAt", happenedAt);
     formData.append("type", type);
-    if (file) formData.append("image", file);
+    if (file) {
+      const small = await compressImage(file);
+      if (small.size > 4.4 * 1024 * 1024) {
+        setStatus({ kind: "error", message: "A imagem é grande demais, tente outra foto." });
+        return;
+      }
+      formData.append("image", small);
+    }
 
     try {
       const response = await fetch(`${API}/api/memories`, {

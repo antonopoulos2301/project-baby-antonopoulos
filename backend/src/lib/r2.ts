@@ -1,5 +1,20 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import sharp from "sharp";
+
+// sharp é nativo: carregamos sob demanda para que, se não estiver
+// disponível no ambiente, o upload continue funcionando (sem otimizar).
+type SharpFn = typeof import("sharp");
+let sharpPromise: Promise<SharpFn | null> | null = null;
+function loadSharp(): Promise<SharpFn | null> {
+  if (!sharpPromise) {
+    sharpPromise = import("sharp")
+      .then((m) => (m.default ?? m) as SharpFn)
+      .catch((err) => {
+        console.error("sharp indisponível, imagens serão enviadas sem otimizar:", err);
+        return null;
+      });
+  }
+  return sharpPromise;
+}
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -76,7 +91,9 @@ export async function uploadToR2(
   let ext = originalExt;
   let finalContentType = contentType || "application/octet-stream";
 
-  if ((contentType || "").startsWith("image/")) {
+  const sharp = (contentType || "").startsWith("image/") ? await loadSharp() : null;
+
+  if (sharp) {
     try {
       body = await sharp(buffer, { animated: true })
         .rotate()

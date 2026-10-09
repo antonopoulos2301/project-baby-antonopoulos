@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { compressImage } from "../lib/compressImage";
 
 const API = import.meta.env.VITE_API_URL ?? "";
-const MAX_BYTES = 10 * 1024 * 1024; // mesmo limite do backend
+// a foto é reduzida no navegador antes do envio; o original pode ser grande
+const MAX_BYTES = 40 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 4.4 * 1024 * 1024; // limite por requisição da Vercel
 
 type ItemStatus = "pending" | "uploading" | "done" | "error";
 
@@ -42,7 +45,7 @@ export function AlbumUploadForm({ secret }: { secret: string }) {
           file,
           preview: URL.createObjectURL(file),
           status: tooBig ? "error" : "pending",
-          error: tooBig ? "Arquivo maior que 10 MB" : undefined,
+          error: tooBig ? "Arquivo maior que 40 MB" : undefined,
         } as Item;
       });
     setItems((prev) => [...prev, ...novos]);
@@ -65,8 +68,13 @@ export function AlbumUploadForm({ secret }: { secret: string }) {
     setStatus(item.id, "uploading");
     const data = new FormData();
     if (title.trim()) data.append("title", title.trim());
-    data.append("image", item.file);
     try {
+      const file = await compressImage(item.file);
+      if (file.size > MAX_UPLOAD_BYTES) {
+        setStatus(item.id, "error", "Foto grande demais");
+        return "fail";
+      }
+      data.append("image", file);
       const res = await fetch(`${API}/api/photos`, {
         method: "POST",
         headers: { "x-admin-secret": secret },
